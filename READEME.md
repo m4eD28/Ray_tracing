@@ -1,0 +1,2 @@
+# Ray_tracing
+本など読んで自分で勉強する用のrepositoryです
