@@ -59,7 +59,7 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate) {
 }
 
 int main() {
-  const int N = 1000;
+  const int N = 100;
 
   Image img(512, 512);
   PinholeCamera cam(Vec3(0, 0, 4), Vec3(0, 0, -1), 1);
