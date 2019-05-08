@@ -60,7 +60,7 @@ class ThinLensCamera : public Camera {
 
       double x, y;
       sampleDisk(x, y);
-      Vec3 l = lensCenter + lensRadius*(x*camRight * y*camUp);
+      Vec3 l = lensCenter + lensRadius*(x*camRight + y*camUp);
 
       return Ray(l, normalize(pf - l));
     };

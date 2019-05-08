@@ -26,9 +26,9 @@ class Sphere {
       double t1 = -b - std::sqrt(D);
       double t2 = -b + std::sqrt(D);
 
-      if(t1 > 10000 | t2 < 0) return false;
+      if(t1 > 10000 | t2 < ray.tmin) return false;
       double t = t1;
-      if(t < 0) {
+      if(t < ray.tmin) {
         t = t2;
         if(t2 > 10000) return false;
       }
