@@ -1,5 +1,6 @@
 *.h.gch
 *.ppm
+*.png
 3
 Photorealism-Book/
 Pi.cpp

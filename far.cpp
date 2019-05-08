@@ -45,8 +45,8 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
 
       throughput *= brdf*cos/pdf;
 
-      ray = Ray(res.hitPos, wi);
-      /* ray = Ray(res.hitPos + 0.001*res.hitNormal, wi); */
+      /* ray = Ray(res.hitPos, wi); */
+      ray = Ray(res.hitPos + 0.001*res.hitNormal, wi);
     }
 
     else {
@@ -61,19 +61,23 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
 }
 
 int main() {
-  const int N = 1000;
+  const int N = 20;
 
   Image img(512, 512);
   ThinLensCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), Vec3(0, 0, -3), 1, 0.1);
 
   auto mat1 = std::make_shared<Diffuse>(Vec3(0.9));
   auto mat2 = std::make_shared<Glass>(1.5);
+  auto mat3 = std::make_shared<Mirror>();
+  auto mat4 = std::make_shared<Diffuse>(Vec3(0.2, 0.2, 0.8));
 
   auto light1 = std::make_shared<Light>(Vec3(0));
 
   Aggregate aggregate;
   aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1));
-  aggregate.add(std::make_shared<Sphere>(Vec3(0, 0, -3), 1, mat2, light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat4 ,light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
 
   IBL sky("PaperMill_E_3k.hdr");
 
@@ -101,7 +105,7 @@ int main() {
 
   img.gammma_correction();
 
-  img.ppm_output("use_glass.ppm");
+  img.ppm_output("far.ppm");
 
   return 0;
 }
