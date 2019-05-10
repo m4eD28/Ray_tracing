@@ -45,7 +45,11 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
 
       throughput *= brdf*cos/pdf;
 
-      /* ray = Ray(res.hitPos, wi); */
+      /* if (hitMaterial == "Glass") { */
+      /*   ray = Ray(res.hitPos, wi); */
+      /* } else { */
+      /*   ray = Ray(res.hitPos + 0.001*res.hitNormal, wi); */
+      /* } */
       ray = Ray(res.hitPos + 0.001*res.hitNormal, wi);
     }
 
