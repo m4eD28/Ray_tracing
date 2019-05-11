@@ -45,12 +45,7 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
 
       throughput *= brdf*cos/pdf;
 
-      /* if (hitMaterial == "Glass") { */
-      /*   ray = Ray(res.hitPos, wi); */
-      /* } else { */
-      /*   ray = Ray(res.hitPos + 0.001*res.hitNormal, wi); */
-      /* } */
-      ray = Ray(res.hitPos + 0.001*res.hitNormal, wi);
+      ray = Ray(res.hitPos, wi);
     }
 
     else {
@@ -65,7 +60,7 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
 }
 
 int main() {
-  const int N = 20;
+  const int N = 100;
 
   Image img(512, 512);
   ThinLensCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), Vec3(0, 0, -3), 1, 0.1);
