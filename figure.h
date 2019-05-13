@@ -1,5 +1,5 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef FIGURE_H
+#define FIGURE_H
 #include <cmath>
 #include <memory>
 #include "vec3.h"
@@ -39,6 +39,15 @@ class Sphere {
       res.hitSphere = this;
 
       return true;
-    };
+    }
+};
+
+class Triangle {
+  public:
+    double det(const Vec3& a, const Vec3& b, const Vec3& c) {
+      return (a.x * b.y * c.z) + (a.y * b.z * c.x) + (a.z * b.x * c.y) - (a.x * b.z * c.y) - (a.y * b.x * c.z) - (a.z * b.y * c.x);
+    }
+
+    
 };
 #endif

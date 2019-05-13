@@ -4,7 +4,7 @@
 #include <vector>
 #include "ray.h"
 #include "hit.h"
-#include "sphere.h"
+#include "figure.h"
 
 class Aggregate {
   public:
