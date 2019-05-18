@@ -2,14 +2,14 @@
 #define HIT_H
 #include "vec3.h"
 
-class Sphere;
+class Figure;
 
 class Hit {
   public:
     double t;
     Vec3 hitPos;
     Vec3 hitNormal;
-    const Sphere* hitSphere;
+    const Figure* hitShape;
 
     Hit() {
       t = 10000;
