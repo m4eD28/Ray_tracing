@@ -8,21 +8,24 @@
 #include "material.h"
 #include "light.h"
 
-class Object {
-  public:
 
+class Figure {
+  public:
+    std::shared_ptr<Material> material;
+    std::shared_ptr<Light> light;
+    Figure() {};
+    Figure(std::shared_ptr<Material> material, std::shared_ptr<Light> light) : material(_material), light(_light){};
+    virtual bool intersect(const Ray& ray, Hit& hit) const = 0;
 };
 
-class Sphere {
+class Sphere : public Figure {
   public:
     Vec3 center;
     double radius;
-    std::shared_ptr<Material> material;
-    std::shared_ptr<Light> light;
 
-    Sphere(const Vec3& _center, double _radius, const std::shared_ptr<Material>& _material, const std::shared_ptr<Light>& _light) : center(_center), radius(_radius), material(_material), light(_light) {};
+    Sphere(const Vec3& _center, double _radius, const std::shared_ptr<Material>& _material, const std::shared_ptr<Light>& _light) : center(_center), radius(_radius), Figure(material, light) {};
 
-    bool intersect(const Ray& ray, Hit& res) const {
+    virtual bool intersect(const Ray& ray, Hit& res) const {
       double b = dot(ray.direction, ray.origin - center);
       double c = (ray.origin - center).length2() - radius*radius;
       double D = b*b - c;
@@ -46,29 +49,27 @@ class Sphere {
     }
 };
 
-class Plane {
+class Plane : public Figure {
   public:
     Vec3 center;
     Vec3 normal;
-    std::shared_ptr<Material> material;
-    std::shared_ptr<Light> light;
 
-    Plane(const Vec3& _center, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), material(_material), light(_light) {};
-    bool intersect(const Ray& ray, const Hit& res ) {
+    Plane(const Vec3& _center, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(material, light) {};
+    virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
       if (fabs(denominator) > 0.001) {
         Vec3 defference = center - ray.origin;
         t = dot(defference, normal) / denominator;
-        if (t <= 0.001) {
-          return false;
+        if (t == 0) {
+          return true;
         }
       }
 
       res.t = t;
       res.hitPos = ray(t);
       res.hitNormal = normalize(res.hitPos - center);
-      res.hitSphere = this;
+      res.hitShape = this;
       return false;
     }
 };
