@@ -61,8 +61,8 @@ class Plane : public Figure {
       if (fabs(denominator) > 0.001) {
         Vec3 defference = center - ray.origin;
         t = dot(defference, normal) / denominator;
-        if (t == 0) {
-          return true;
+        if (t != 0) {
+          return false;
         }
       }
 
@@ -70,7 +70,8 @@ class Plane : public Figure {
       res.hitPos = ray(t);
       res.hitNormal = normalize(res.hitPos - center);
       res.hitShape = this;
-      return false;
+
+      return true;
     }
 };
 
