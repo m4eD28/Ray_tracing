@@ -29,8 +29,8 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
       orthonormalBasis(n, s, t);
       Vec3 wo_local = worldToLocal(-ray.direction, s, n, t);
 
-      auto hitMaterial = res.hitSphere->material;
-      auto hitLight = res.hitSphere->light;
+      auto hitMaterial = res.hitShape->material;
+      auto hitLight = res.hitShape->light;
 
       col += throughput*hitLight->Le();
 
@@ -39,13 +39,13 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
       double pdf;
       brdf = hitMaterial->sample(wo_local, wi_local, pdf);
 
-      double cos = cosTheta(wi_local);
+      double cos = absCosTheta(wi_local);
 
       Vec3 wi = localToWorld(wi_local, s, n, t);
 
       throughput *= brdf*cos/pdf;
 
-      ray = Ray(res.hitPos + 0.001*res.hitNormal, wi);
+      ray = Ray(res.hitPos, wi);
     }
 
     else {
@@ -63,18 +63,22 @@ int main() {
   const int N = 100;
 
   Image img(512, 512);
-  PinholeCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), 1);
+  ThinLensCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), Vec3(0, 0, -3), 1, 0.1);
 
   auto mat1 = std::make_shared<Diffuse>(Vec3(0.9));
-  auto mat2 = std::make_shared<Diffuse>(Vec3(0.2, 0.2, 0.8));
+  auto mat2 = std::make_shared<Glass>(1.5);
+  auto mat3 = std::make_shared<Mirror>();
+  auto mat4 = std::make_shared<Diffuse>(Vec3(0.2, 0.2, 0.8));
 
   auto light1 = std::make_shared<Light>(Vec3(0));
 
   Aggregate aggregate;
   aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1));
-  aggregate.add(std::make_shared<Sphere>(Vec3(0, 0, -3), 1, mat2, light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat4 ,light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
+  aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
 
-  SimpleSky sky;
+  IBL sky("PaperMill_E_3k.hdr");
 
 #pragma omp parallel for schedule(dynamic, 1)
   for (int i = 0; i < img.width; i++) {
@@ -100,7 +104,7 @@ int main() {
 
   img.gammma_correction();
 
-  img.ppm_output("use_sky.ppm");
+  img.ppm_output("main.ppm");
 
   return 0;
 }
