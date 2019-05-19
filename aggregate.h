@@ -8,13 +8,13 @@
 
 class Aggregate {
   public:
-    std::vector<std::shared_ptr<Sphere>> spheres; //物体
+    std::vector<std::shared_ptr<Figure>> spheres; //物体
 
     Aggregate() {};
-    Aggregate(const std::vector<std::shared_ptr<Sphere>>& _spheres) :
+    Aggregate(const std::vector<std::shared_ptr<Figure>>& _spheres) :
     spheres(_spheres) {};
 
-    void add(const std::shared_ptr<Sphere>& s) {
+    void add(const std::shared_ptr<Figure>& s) {
       spheres.push_back(s);
     };
 

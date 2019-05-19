@@ -14,7 +14,7 @@ class Figure {
     std::shared_ptr<Material> material;
     std::shared_ptr<Light> light;
     Figure() {};
-    Figure(std::shared_ptr<Material> material, std::shared_ptr<Light> light) : material(_material), light(_light){};
+    Figure(const std::shared_ptr<Material> _material, const std::shared_ptr<Light> _light) : material(_material), light(_light){};
     virtual bool intersect(const Ray& ray, Hit& hit) const = 0;
 };
 
@@ -23,7 +23,7 @@ class Sphere : public Figure {
     Vec3 center;
     double radius;
 
-    Sphere(const Vec3& _center, double _radius, const std::shared_ptr<Material>& _material, const std::shared_ptr<Light>& _light) : center(_center), radius(_radius), Figure(material, light) {};
+    Sphere(const Vec3& _center, double _radius, const std::shared_ptr<Material>& _material, const std::shared_ptr<Light>& _light) : center(_center), radius(_radius), Figure(_material, _light) {};
 
     virtual bool intersect(const Ray& ray, Hit& res) const {
       double b = dot(ray.direction, ray.origin - center);
@@ -54,7 +54,7 @@ class Plane : public Figure {
     Vec3 center;
     Vec3 normal;
 
-    Plane(const Vec3& _center, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(material, light) {};
+    Plane(const Vec3& _center, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(_material, _light) {};
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
