@@ -28,8 +28,8 @@ Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate) {
       orthonormalBasis(n, s, t);
       Vec3 wo_local = worldToLocal(-ray.direction, s, n, t);
 
-      auto hitMaterial = res.hitSphere->material;
-      auto hitLight = res.hitSphere->light;
+      auto hitMaterial = res.hitShape->material;
+      auto hitLight = res.hitShape->light;
 
       col += throughput*hitLight->Le();
 

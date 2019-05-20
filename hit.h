@@ -9,7 +9,7 @@ class Hit {
     double t;
     Vec3 hitPos;
     Vec3 hitNormal;
-    Figure* hitShape;
+    const Figure* hitShape;
 
     Hit() {
       t = 10000;

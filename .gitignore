@@ -36,3 +36,4 @@ use_glass.cpp
 use_ibl.cpp
 use_sky.cpp
 use_thinlens.cpp
+far.cpp

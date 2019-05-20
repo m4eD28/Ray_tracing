@@ -73,7 +73,8 @@ int main() {
   auto light1 = std::make_shared<Light>(Vec3(0));
 
   Aggregate aggregate;
-  aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1));
+  /* aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1)); */
+  aggregate.add(std::make_shared<Plane>(Vec3(0, 0, 0), Vec3(0, 1, 0), mat3, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat4 ,light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));

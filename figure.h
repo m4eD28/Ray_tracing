@@ -54,25 +54,36 @@ class Plane : public Figure {
     Vec3 center;
     Vec3 normal;
 
-    Plane(const Vec3& _center, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(_material, _light) {};
+    Plane(const Vec3& _center, const Vec3& _normal, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(_material, _light) {};
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
-      if (fabs(denominator) > 0.001) {
+      if (fabs(denominator) > 1e-6) {
         Vec3 defference = center - ray.origin;
         t = dot(defference, normal) / denominator;
-        if (t != 0) {
-          return false;
+        if(t >= 0) {
+          res.t = t;
+          res.hitPos = ray(t);
+          res.hitNormal = normalize(res.hitPos - center);
+          res.hitShape = this;
+
+          return true;
         }
       }
 
-      res.t = t;
-      res.hitPos = ray(t);
-      res.hitNormal = normalize(res.hitPos - center);
-      res.hitShape = this;
+      return false;
 
-      return true;
     }
+};
+
+class Disk : public Figure {
+  public:
+    Vec3 center;
+    Vec3 normal;
+    double radius;
+
+    Disk(const Vec3& _center, const Vec3& _normal, double _radius, const std::shared_ptr<Material> _material, const std::shared_ptr<Light> _light) : center(_center), normal(_normal), radius(_radius), Figure(_material, _light) {};
+    double t = 0;
 };
 
 class Triangle {
