@@ -12,52 +12,7 @@
 #include "light.h"
 #include "random.h"
 #include "sky.h"
-
-const int MAX_DEPTH = 500;
-const double ROULETTE = 0.9;
-
-Vec3 radiance(const Ray& init_ray, const Aggregate& aggregate, const Sky& sky) {
-  Vec3 col;
-  Vec3 throughput(1);
-  Ray ray = init_ray;
-
-  for (int depth = 0; depth < MAX_DEPTH; depth++) {
-    Hit res;
-    if(aggregate.intersect(ray, res)) {
-      Vec3 n = res.hitNormal;
-      Vec3 s, t;
-      orthonormalBasis(n, s, t);
-      Vec3 wo_local = worldToLocal(-ray.direction, s, n, t);
-
-      auto hitMaterial = res.hitShape->material;
-      auto hitLight = res.hitShape->light;
-
-      col += throughput*hitLight->Le();
-
-      Vec3 brdf;
-      Vec3 wi_local;
-      double pdf;
-      brdf = hitMaterial->sample(wo_local, wi_local, pdf);
-
-      double cos = absCosTheta(wi_local);
-
-      Vec3 wi = localToWorld(wi_local, s, n, t);
-
-      throughput *= brdf*cos/pdf;
-
-      ray = Ray(res.hitPos, wi);
-    }
-
-    else {
-      col += throughput*sky.getRadiance(ray);
-      break;
-    }
-
-    if(rnd() >= ROULETTE) break;
-    else throughput /= ROULETTE;
-  }
-  return col;
-}
+#include "radience.h"
 
 int main() {
   const int N = 100;
@@ -74,7 +29,7 @@ int main() {
 
   Aggregate aggregate;
   /* aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1)); */
-  aggregate.add(std::make_shared<Plane>(Vec3(0, 0, 0), Vec3(0, 1, 0), mat3, light1));
+  aggregate.add(std::make_shared<Plane>(Vec3(0, 0, 0), Vec3(0, 1, 0), mat1, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat4 ,light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
@@ -90,7 +45,7 @@ int main() {
 
         Ray ray = cam.getRay(-u, -v);
 
-        Vec3 col = radiance(ray, aggregate, sky);
+        Vec3 col = radience(ray, aggregate, sky);
 
         img.addPixel(i, j, col);
       }

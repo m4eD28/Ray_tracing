@@ -58,21 +58,18 @@ class Plane : public Figure {
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
-      if (fabs(denominator) > 1e-6) {
+      if (fabs(denominator) >= 1e-6) {
         Vec3 defference = center - ray.origin;
         t = dot(defference, normal) / denominator;
-        if(t >= 0) {
+        if (t >= 0) {
           res.t = t;
           res.hitPos = ray(t);
           res.hitNormal = normalize(res.hitPos - center);
           res.hitShape = this;
-
-          return true;
         }
       }
 
       return false;
-
     }
 };
 

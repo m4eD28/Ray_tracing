@@ -11,7 +11,7 @@
 
 class Sky {
   public:
-    virtual Vec3 getRadiance(const Ray& ray) const = 0;
+    virtual Vec3 getRadience(const Ray& ray) const = 0;
 };
 
 class UniformSky : public Sky {
@@ -20,7 +20,7 @@ class UniformSky : public Sky {
 
     UniformSky(const Vec3& _color) : color(_color) {};
 
-    Vec3 getRadiance(const Ray& ray) const {
+    Vec3 getRadience(const Ray& ray) const {
       return color;
     };
 };
@@ -29,7 +29,7 @@ class SimpleSky : public Sky {
   public:
     SimpleSky() {};
 
-    Vec3 getRadiance(const Ray& ray) const {
+    Vec3 getRadience(const Ray& ray) const {
       double t = (ray.direction.y + 1)/2;
       return (1 - t)*Vec3(1) + t*Vec3(0.7, 0.8, 1);
     };
@@ -49,7 +49,7 @@ class IBL : public Sky {
       stbi_image_free(hdr_image);
     };
 
-    Vec3 getRadiance(const Ray& ray) const {
+    Vec3 getRadience(const Ray& ray) const {
       double theta = std::acos(ray.direction.y);
       double phi = std::atan2(ray.direction.z, ray.direction.x);
       if(phi < 0) phi += 2*M_PI;

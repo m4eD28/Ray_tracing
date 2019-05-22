@@ -3,6 +3,8 @@
 #include <cmath>
 #include "vec3.h"
 #include "random.h"
+#include "ray.h"
+#include "hit.h"
 
 double cosTheta(const Vec3& v) {
   return v.y;
@@ -37,6 +39,7 @@ Vec3 reflect(const Vec3& v, const Vec3& n) {
 class Material {
   public:
     virtual Vec3 sample(const Vec3& wo, Vec3& wi, double& pdf) const = 0;
+    /* virtual bool scatter(const Ray& ray, const Hit& hit, Vec3& attenuation, Ray& scatterd) const = 0; */
 };
 
 class Diffuse : public Material {
@@ -117,4 +120,13 @@ class Glass : public Material {
       }
   };
 };
+
+/* class lambertian : puclic material { */
+/*   public: */
+/*     lambertian(const Vec3& a) : albedo(a) {}; */
+/*     virtual bool scatter(const Ray& ray, const Hit& hit, Vec3& attenuation, Ray& scattered) const { */
+
+/*     } */
+/*     Vec3 albedo; */
+/* }; */
 #endif
