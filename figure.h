@@ -2,6 +2,7 @@
 #define FIGURE_H
 #include <cmath>
 #include <memory>
+#include <iostream>
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
@@ -54,22 +55,23 @@ class Plane : public Figure {
     Vec3 center;
     Vec3 normal;
 
-    Plane(const Vec3& _center, const Vec3& _normal, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), Figure(_material, _light) {};
+    Plane(const Vec3& _center, const Vec3& _normal, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), normal(_normal), Figure(_material, _light) {};
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
-      if (fabs(denominator) >= 1e-6) {
-        Vec3 defference = center - ray.origin;
-        t = dot(defference, normal) / denominator;
-        if (t >= 0) {
-          res.t = t;
-          res.hitPos = ray(t);
-          res.hitNormal = normalize(res.hitPos - center);
-          res.hitShape = this;
-        }
-      }
+      if (fabs(denominator) < 1e-6) return false;
 
-      return false;
+      Vec3 difference = center - ray.origin;
+      t = dot(difference, normal) / denominator;
+
+      if (t < 0) return false;
+
+      res.t = t;
+      res.hitPos = ray(t);
+      res.hitNormal = normal;
+      res.hitShape = this;
+
+      return true;
     }
 };
 

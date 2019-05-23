@@ -15,9 +15,10 @@
 #include "radience.h"
 
 int main() {
-  const int N = 100;
+  const int N = 30;
 
-  Image img(512, 512);
+  Image img(1024, 512);
+  double screen_height = 2.0;
   ThinLensCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), Vec3(0, 0, -3), 1, 0.1);
 
   auto mat1 = std::make_shared<Diffuse>(Vec3(0.9));
@@ -29,7 +30,7 @@ int main() {
 
   Aggregate aggregate;
   /* aggregate.add(std::make_shared<Sphere>(Vec3(0, -10001, 0), 10000, mat1, light1)); */
-  aggregate.add(std::make_shared<Plane>(Vec3(0, 0, 0), Vec3(0, 1, 0), mat1, light1));
+  aggregate.add(std::make_shared<Plane>(Vec3(0, -1, 0), Vec3(0, 1, 0), mat4, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat4 ,light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
   aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
@@ -40,8 +41,8 @@ int main() {
   for (int i = 0; i < img.width; i++) {
     for (int j = 0; j < img.height; j++) {
       for (int k = 0; k < N; k++) {
-        double u = (2.0*(i + rnd()) - img.width)/img.width;
-        double v = (2.0*(j + rnd()) - img.height)/img.height;
+        double u = screen_height*(2*i - img.width) / (2 * img.height) + screen_height*rnd()/img.height;
+        double v = screen_height*(2*j - img.height)/(2*img.height) + screen_height*rnd()/img.height;
 
         Ray ray = cam.getRay(-u, -v);
 
