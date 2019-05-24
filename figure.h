@@ -64,7 +64,7 @@ class Plane : public Figure {
       Vec3 difference = center - ray.origin;
       t = dot(difference, normal) / denominator;
 
-      if (t < 0) return false;
+      if (t <= 0) return false;
 
       res.t = t;
       res.hitPos = ray(t);
@@ -83,12 +83,59 @@ class Disk : public Figure {
 
     Disk(const Vec3& _center, const Vec3& _normal, double _radius, const std::shared_ptr<Material> _material, const std::shared_ptr<Light> _light) : center(_center), normal(_normal), radius(_radius), Figure(_material, _light) {};
     double t = 0;
+    virtual bool intersect(const Ray& ray, Hit& res ) const {
+      double t;
+      double denominator = dot(normal, ray.direction);
+      if (fabs(denominator) < 1e-6) return false;
+
+      Vec3 difference = center - ray.origin;
+      t = dot(difference, normal) / denominator;
+
+      if (t <= 0) return false;
+
+      Vec3 temp= ray.origin + t*ray.direction - center;
+      double radius_val = temp.length();
+      if (radius_val > radius) return false;
+      res.t = t;
+      res.hitPos = ray(t);
+      res.hitNormal = normal;
+      res.hitShape = this;
+
+      return true;
+    }
 };
 
-class Triangle {
-  public:
+/* class Triangle: public Figure { */
+/*   public: */
+/*     Vec3 center; */
+/*     Vec3 normal; */
+/*     Vec3 a; */
+/*     Vec3 b; */
+/*     Vec3 c; */
 
-};
+/*     Triangle(const Vec3& _center, const Vec3& _normal, const Vec3& _a, const Vec3& _b, const Vec3& _c, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), normal(_normal), a(_a), b(_b), c(_c), Figure(_material, _light) {}; */
+/*     virtual bool intersect(const Ray& ray, Hit& res ) const { */
+/*       double t; */
+/*       double denominator = dot(normal, ray.direction); */
+/*       if (fabs(denominator) < 1e-6) return false; */
+
+/*       Vec3 difference = center - ray.origin; */
+/*       t = dot(difference, normal) / denominator; */
+
+/*       if (t <= 0) return false; */
+/*       double p1 = cross(a, b); */
+/*       double p2 = cross(b, c); */
+/*       double p3 = cross(c, a); */
+
+/*       res.t = t; */
+/*       res.hitPos = ray(t); */
+/*       res.hitNormal = normal; */
+/*       res.hitShape = this; */
+
+/*       return true; */
+/*     } */
+/* }; */
+
 
 class Box {
   public:
