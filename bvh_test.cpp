@@ -1,7 +1,7 @@
 #include <memory>
 #include <random>
-#include <omp.h>
 #include <chrono>
+#include <omp.h>
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
@@ -19,7 +19,7 @@
 int main() {
   std::chrono::system_clock::time_point start, end;
   start = std::chrono::system_clock::now();
-  const int N = 1000;
+  const int N = 10;
 
   Image img(1024, 512);
   double screen_height = 2.0;
@@ -42,11 +42,17 @@ int main() {
   aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
   aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(2, -1.001, -3), Vec3(4, 3, -3), Vec3(5, -1.089, -3), mat6, light1));
 
-  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, -1.1, -3), Vec3(-5, 3, -3), Vec3(-2.5, -1.089, -3), mat1, light1));
-  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, 3, -3), Vec3(-2.5, 3, -3), Vec3(-2.5, -1.089, -3), mat1, light1));
+  //box
+  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, -1, -3), Vec3(-5, 3, -3), Vec3(-2.5, -1, -3), mat1, light1));
+  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, 3, -3), Vec3(-2.5, 3, -3), Vec3(-2.5, 3, -3), mat1, light1));
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(1, 0, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(1, 0, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(-1, 0, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(-1, 0, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(0, 1, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(0, 1, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
 
   constructBVH(aggregate.shapes);
-
   IBL sky("PaperMill_E_3k.hdr");
 
 #pragma omp parallel for schedule(dynamic, 1)
@@ -73,11 +79,10 @@ int main() {
 
   img.gammma_correction();
 
-  img.ppm_output("main.ppm");
+  img.ppm_output("bvh_test.ppm");
 
   end = std::chrono::system_clock::now();
   double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
   std:: cout << elapsed << std::endl;
-
   return 0;
 }

@@ -1,7 +1,6 @@
 #include <memory>
 #include <random>
 #include <omp.h>
-#include <chrono>
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
@@ -14,14 +13,11 @@
 #include "random.h"
 #include "sky.h"
 #include "radience.h"
-#include "bvh.h"
 
 int main() {
-  std::chrono::system_clock::time_point start, end;
-  start = std::chrono::system_clock::now();
-  const int N = 1000;
+  const int N = 10;
 
-  Image img(1024, 512);
+  Image img(1024, 500);
   double screen_height = 2.0;
   ThinLensCamera cam(Vec3(0, 0, 1), Vec3(0, 0, -1), Vec3(0, 0, -3), 1, 0.1);
 
@@ -35,17 +31,13 @@ int main() {
   auto light1 = std::make_shared<Light>(Vec3(0));
 
   Aggregate aggregate;
-  aggregate.add(std::make_shared<Disk>(Vec3(0, -1, -4), Vec3(0, 1, 0), 3, mat5, light1));
-  aggregate.add(std::make_shared<Plane>(Vec3(0, -1.1, 0), Vec3(0, 1, 0), mat4, light1));
-  aggregate.add(std::make_shared<Sphere>(Vec3(0, 1+std::sqrt(2)/2, -3), 1, mat1 ,light1));
-  aggregate.add(std::make_shared<Sphere>(Vec3(1, 0, -3), 1, mat2, light1));
-  aggregate.add(std::make_shared<Sphere>(Vec3(-1, 0, -3), 1, mat3, light1));
-  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(2, -1.001, -3), Vec3(4, 3, -3), Vec3(5, -1.089, -3), mat6, light1));
+  aggregate.add(std::make_shared<Plane>(Vec3(0, -1, 0), Vec3(0, 1, 0), mat4, light1));
 
-  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, -1.1, -3), Vec3(-5, 3, -3), Vec3(-2.5, -1.089, -3), mat1, light1));
-  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-5, 3, -3), Vec3(-2.5, 3, -3), Vec3(-2.5, -1.089, -3), mat1, light1));
-
-  constructBVH(aggregate.shapes);
+  //box
+  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-2, -1, -3), Vec3(-2, 1.8, -3), Vec3(1, -1, -3), mat1, light1));
+  aggregate.add(std::make_shared<Triangle>(Vec3(0, 0, 1), Vec3(-2, 1.8, -3), Vec3(1, 1.8, -3), Vec3(1, -1, -3), mat1, light1));
+  aggregate.add(std::make_shared<Triangle>(Vec3(0.5, 1, 0), Vec3(-2, 1.8, -3), Vec3(1, 1.8, -3), Vec3(-1.5, 3.0, -5), mat1, light1));
+  /* aggregate.add(std::make_shared<Triangle>(Vec3(0.5, 1, 0), Vec3(), Vec3(), Vec3(), mat1, light1)); */
 
   IBL sky("PaperMill_E_3k.hdr");
 
@@ -73,11 +65,7 @@ int main() {
 
   img.gammma_correction();
 
-  img.ppm_output("main.ppm");
-
-  end = std::chrono::system_clock::now();
-  double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-  std:: cout << elapsed << std::endl;
+  img.ppm_output("box.ppm");
 
   return 0;
 }
