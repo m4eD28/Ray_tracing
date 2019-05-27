@@ -19,7 +19,7 @@
 int main() {
   std::chrono::system_clock::time_point start, end;
   start = std::chrono::system_clock::now();
-  const int N = 1000;
+  const int N = 10;
 
   Image img(1024, 512);
   double screen_height = 2.0;

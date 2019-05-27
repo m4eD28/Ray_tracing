@@ -119,6 +119,35 @@ void constructBVH_internal (std::deque<std::shared_ptr<Figure>> &polygons, int n
   }
 }
 
+/* struct IntersectInformation { */
+/*   double normal[3]; */
+/*   double distance; */
+/* }; */
+
+/* bool IntersectAABBvsRay(double aabb[2][3], const Ray &ray) { */
+/*   double FLT_MAX = 10000; */
+/*   double t_max =  FLT_MAX; */
+/*   double t_min = -FLT_MAX; */
+
+/*   for (int i=0; i<3; i++) { */
+/*     double t1 = (aabb[0][i] - ray.org[i])/ray.dir[i]; */
+/*     double t2 = (aabb[1][i] - ray.org[i])/ray.dir[i]; */
+/*     double t_near = std::min(t1, t2); */
+/*     double t_far = std::max(t1, t2); */
+/*     t_max = std::min(t_max, t_far); */
+/*     t_min = std::max(t_min, t_near); */
+
+/*     if (t_min > t_max) return false; */
+/*   } */
+/*   return true; */
+/* }; */
+
+
+/* /1* IntersectInformation hitInfo; *1/ */
+/* /1* hitInfo.distance = FLT_MAX; *1/ */
+/* /1* Triangle *hitTriangle = Intersect(bvhRoot, 0, ray, hitInfo); *1/ */
+
+
 void constructBVH(std::deque<std::shared_ptr<Figure>> &polygons) {
   used_node_count = 0;
   constructBVH_internal(polygons, 0);
