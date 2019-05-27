@@ -9,6 +9,7 @@
 #include "material.h"
 #include "light.h"
 
+const double kEpsilon = 1e-6;
 
 class Figure {
   public:
@@ -59,7 +60,7 @@ class Plane : public Figure {
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
-      if (fabs(denominator) < 1e-6) return false;
+      if (fabs(denominator) < kEpsilon) return false;
 
       Vec3 difference = center - ray.origin;
       t = dot(difference, normal) / denominator;
@@ -86,7 +87,7 @@ class Disk : public Figure {
     virtual bool intersect(const Ray& ray, Hit& res ) const {
       double t;
       double denominator = dot(normal, ray.direction);
-      if (fabs(denominator) < 1e-6) return false;
+      if (fabs(denominator) < kEpsilon) return false;
 
       Vec3 difference = center - ray.origin;
       t = dot(difference, normal) / denominator;
@@ -105,36 +106,48 @@ class Disk : public Figure {
     }
 };
 
-/* class Triangle: public Figure { */
-/*   public: */
-/*     Vec3 center; */
-/*     Vec3 normal; */
-/*     Vec3 a; */
-/*     Vec3 b; */
-/*     Vec3 c; */
+class Triangle: public Figure {
+  public:
+    Vec3 normal;
+    Vec3 a;
+    Vec3 b;
+    Vec3 c;
 
-/*     Triangle(const Vec3& _center, const Vec3& _normal, const Vec3& _a, const Vec3& _b, const Vec3& _c, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : center(_center), normal(_normal), a(_a), b(_b), c(_c), Figure(_material, _light) {}; */
-/*     virtual bool intersect(const Ray& ray, Hit& res ) const { */
-/*       double t; */
-/*       double denominator = dot(normal, ray.direction); */
-/*       if (fabs(denominator) < 1e-6) return false; */
+    Triangle(const Vec3& _normal, const Vec3& _a, const Vec3& _b, const Vec3& _c, const std::shared_ptr<Material> _material, const std::shared_ptr<Light>& _light) : normal(_normal), a(_a), b(_b), c(_c), Figure(_material, _light) {};
+    virtual bool intersect(const Ray& ray, Hit& res ) const {
+      Vec3 e1 = b - a;
+      Vec3 e2 = c - a;
 
-/*       Vec3 difference = center - ray.origin; */
-/*       t = dot(difference, normal) / denominator; */
+      Vec3 alpha = cross(ray.direction, e2);
+      double det = dot(e1, alpha);
+      /* std::cout << "b1" << normal << a << b << c << std::endl; */
+      if (-kEpsilon < det && det < kEpsilon) return false;
+      /* std::cout << "b2" << normal << a << b << c << std::endl; */
+      double invDet = 1.0 / det;
+      Vec3 r = ray.origin - a;
 
-/*       if (t <= 0) return false; */
-/*       double p1 = cross(a, b); */
-/*       double p2 = cross(b, c); */
-/*       double p3 = cross(c, a); */
+      double u = dot(alpha, r) * invDet;
+      if(u < 0 || u > 1.0) return false;
+      /* std::cout << "b3" << normal << a << b << c << std::endl; */
 
-/*       res.t = t; */
-/*       res.hitPos = ray(t); */
-/*       res.hitNormal = normal; */
-/*       res.hitShape = this; */
+      Vec3 beta = cross(r, e1);
 
-/*       return true; */
-/*     } */
-/* }; */
+      double v = dot(ray.direction, beta) * invDet;
+      if (v < 0 || v + u > 1.0) return false;
+      /* std::cout << "b4" << normal << a << b << c << std::endl; */
+
+      double t = dot(e2, beta) * invDet;
+      if (t < 0) return false;
+      /* std::cout << "b5" << normal << a << b << c << std::endl; */
+
+      res.t = t;
+      res.hitPos = ray(t);
+      res.hitNormal = normal;
+      res.hitShape = this;
+
+      return true;
+    }
+};
 
 
 class Box {
